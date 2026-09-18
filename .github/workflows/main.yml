@@ -182,7 +182,7 @@ jobs:
             POSTGRES_PASSWORD=foodgram_password
             DB_HOST=db
             DB_PORT=5432
-            DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+            DJANGO_SECRET_KEY=sou$g)+f!s9dqyegben)a)!y3iucgj@x4%%e#_0ret5a$zb)5v
             DJANGO_DEBUG=False
             DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,foodgram-yp-2026.duckdns.org,158.160.207.178
             DJANGO_CORS_ALLOWED_ORIGINS=https://foodgram-yp-2026.duckdns.org
