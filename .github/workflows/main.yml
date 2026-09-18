@@ -113,38 +113,83 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [build_backend, build_frontend, build_gateway]
+    needs: [ build_backend, build_frontend, build_gateway ]
     if: github.ref_name == 'main'
     steps:
-      - uses: actions/checkout@v3
-      - name: Copy docker-compose.production.yml
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "infra/docker-compose.production.yml"
-          target: "foodgram"
-      - name: Deploy
+      - uses: actions/checkout@v4
+
+      - name: Deploy on server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd foodgram
+            mkdir -p ~/foodgram/infra
+            cd ~/foodgram/infra
+
+            cat > docker-compose.production.yml << 'EOF'
+            volumes:
+              pg_data:
+              static:
+              media:
+
+            services:
+              db:
+                image: postgres:13.10
+                env_file: .env
+                volumes:
+                  - pg_data:/var/lib/postgresql/data
+                healthcheck:
+                  test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+                  interval: 10s
+                  timeout: 5s
+                  retries: 5
+
+              backend:
+                image: nastt/foodgram_backend:latest
+                env_file: .env
+                volumes:
+                  - static:/backend_static
+                  - media:/media
+                  - ../data:/app/data:ro
+                depends_on:
+                  db:
+                    condition: service_healthy
+
+              frontend:
+                image: nastt/foodgram_frontend:latest
+                command: cp -r /app/build/. /frontend_static/
+                volumes:
+                  - static:/frontend_static
+
+              gateway:
+                image: nastt/foodgram_gateway:latest
+                volumes:
+                  - static:/staticfiles
+                  - media:/media
+                  - ../docs:/usr/share/nginx/html/api/docs
+                ports:
+                  - "7000:80"
+                depends_on:
+                  - backend
+                  - frontend
+            EOF
+
             cat > .env << 'EOF'
             POSTGRES_DB=foodgram
             POSTGRES_USER=foodgram_user
             POSTGRES_PASSWORD=foodgram_password
             DB_HOST=db
             DB_PORT=5432
-            DJANGO_SECRET_KEY=change-me-in-production
+            DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
             DJANGO_DEBUG=False
-            DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,ваш-домен,ip-сервера
-            DJANGO_CORS_ALLOWED_ORIGINS=https://ваш-домен
-            DJANGO_CSRF_TRUSTED_ORIGINS=https://ваш-домен
+            DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,foodgram-yp-2026.duckdns.org,158.160.207.178
+            DJANGO_CORS_ALLOWED_ORIGINS=https://foodgram-yp-2026.duckdns.org
+            DJANGO_CSRF_TRUSTED_ORIGINS=https://foodgram-yp-2026.duckdns.org
+            USE_POSTGRES=True
             EOF
+
             sudo docker compose -f docker-compose.production.yml pull
             sudo docker compose -f docker-compose.production.yml down
             sudo docker compose -f docker-compose.production.yml up -d

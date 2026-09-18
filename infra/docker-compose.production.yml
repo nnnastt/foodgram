@@ -32,6 +32,7 @@ services:
     volumes:
       - static:/frontend_static
 
+
   gateway:
     image: nastt/foodgram_gateway:latest
     volumes:
