@@ -40,4 +40,3 @@ class RecipeFilter(django_filters.FilterSet):
                 in_shopping_cart__user=self.request.user
             )
         return queryset
-    

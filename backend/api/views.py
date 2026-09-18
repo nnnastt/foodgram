@@ -14,9 +14,9 @@ from users.models import Subscription
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (AvatarSerializer, IngredientSerializer,
-                         RecipeReadSerializer, RecipeShortSerializer,
-                         RecipeWriteSerializer, SubscriptionSerializer,
-                         TagSerializer, UserSerializer)
+                          RecipeReadSerializer, RecipeShortSerializer,
+                          RecipeWriteSerializer, SubscriptionSerializer,
+                          TagSerializer, UserSerializer)
 
 User = get_user_model()
 
