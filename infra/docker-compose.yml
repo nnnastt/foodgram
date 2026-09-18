@@ -1,17 +1,45 @@
-version: '3.3'
+volumes:
+  pg_data:
+  static:
+  media:
+
 services:
+  db:
+    image: postgres:13.10
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ../backend/
+    env_file: .env
+    volumes:
+      - static:/backend_static
+      - media:/media
+      - ../data:/app/data:ro
+    depends_on:
+      db:
+        condition: service_healthy
 
   frontend:
-    container_name: foodgram-front
-    build: ../frontend
+    build: ../frontend/
+    command: cp -r /app/build/. /frontend_static/
     volumes:
-      - ../frontend/:/app/result_build/
-  nginx:
-    container_name: foodgram-proxy
-    image: nginx:1.25.4-alpine
+      - static:/frontend_static
+
+  gateway:
+    build: ../nginx/
+    volumes:
+      - static:/staticfiles
+      - media:/media
+      - ../docs:/usr/share/nginx/html/api/docs
     ports:
       - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ../frontend/build:/usr/share/nginx/html/
-      - ../docs/:/usr/share/nginx/html/api/docs/
+    depends_on:
+      - backend
+      - frontend
