@@ -152,7 +152,7 @@ jobs:
                 volumes:
                   - static:/backend_static
                   - media:/media
-                  - ../data:/app/data:ro
+                  - ./data:/app/data:ro
                 depends_on:
                   db:
                     condition: service_healthy
