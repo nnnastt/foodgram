@@ -1,13 +1,8 @@
-import base64
-import uuid
-
 from django.contrib.auth import get_user_model
-from django.core.files.base import ContentFile
 
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
-
 from drf_extra_fields.fields import Base64ImageField
 
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
