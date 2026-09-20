@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from .constants import (RECIPE_INGREDIENTS_EXTRA,
+                        RECIPE_INGREDIENTS_MIN_NUM)
 from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                      ShoppingCart, Tag)
 
@@ -18,7 +20,8 @@ class IngredientAdmin(admin.ModelAdmin):
 
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
-    extra = 1
+    extra = RECIPE_INGREDIENTS_EXTRA
+    min_num = RECIPE_INGREDIENTS_MIN_NUM
 
 
 @admin.register(Recipe)
@@ -30,7 +33,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
     @admin.display(description='В избранном')
     def favorites_count(self, obj):
-        return obj.favorited_by.count()
+        return obj.favorites.count()
 
 
 @admin.register(Favorite)

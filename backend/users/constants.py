@@ -1,0 +1,6 @@
+USERNAME_MAX_LENGTH = 150
+EMAIL_MAX_LENGTH = 254
+NAME_MAX_LENGTH = 150
+
+USERNAME_REGEX = r'^[\w.@+-]+\Z'
+USERNAME_ERROR = 'Недопустимые символы в username'

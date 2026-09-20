@@ -4,6 +4,8 @@ from pathlib import Path
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
+from recipes.constants import (INGREDIENTS_CSV_FILENAME,
+                               INGREDIENTS_CSV_PATH)
 from recipes.models import Ingredient
 
 
@@ -12,9 +14,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         possible_paths = [
-            Path('/app/data/ingredients.csv'),
-            Path(settings.BASE_DIR).parent / 'data' / 'ingredients.csv',
-            Path(settings.BASE_DIR) / 'data' / 'ingredients.csv',
+            Path(INGREDIENTS_CSV_PATH),
+            Path(settings.BASE_DIR).parent / 'data' / INGREDIENTS_CSV_FILENAME,
+            Path(settings.BASE_DIR) / 'data' / INGREDIENTS_CSV_FILENAME,
         ]
 
         file_path = None
