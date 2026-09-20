@@ -6,6 +6,7 @@ from .constants import (EMAIL_MAX_LENGTH, NAME_MAX_LENGTH,
                         USERNAME_ERROR, USERNAME_MAX_LENGTH,
                         USERNAME_REGEX)
 
+
 class User(AbstractUser):
     email = models.EmailField(
         unique=True,
