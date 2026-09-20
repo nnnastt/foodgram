@@ -8,6 +8,8 @@ from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 
+from drf_extra_fields.fields import Base64ImageField
+
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
 from users.models import Subscription
@@ -40,7 +42,7 @@ class UserSerializer(BaseUserSerializer):
 
 
 class AvatarSerializer(serializers.ModelSerializer):
-    avatar = serializers.Base64ImageField(required=True)
+    avatar = Base64ImageField(required=True)
 
     class Meta:
         model = User
@@ -79,18 +81,6 @@ class RecipeIngredientWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipeIngredient
         fields = ('id', 'amount')
-
-
-class Base64ImageField(serializers.ImageField):
-    def to_internal_value(self, data):
-        if isinstance(data, str) and data.startswith('data:image'):
-            format, imgstr = data.split(';base64,')
-            ext = format.split('/')[-1]
-            data = ContentFile(
-                base64.b64decode(imgstr),
-                name=f'{uuid.uuid4()}.{ext}'
-            )
-        return super().to_internal_value(data)
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
