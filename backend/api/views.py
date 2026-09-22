@@ -16,8 +16,7 @@ from .filters import IngredientFilter, RecipeFilter
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (AvatarSerializer, IngredientSerializer,
                           RecipeReadSerializer, RecipeShortSerializer,
-                          RecipeWriteSerializer, SetPasswordSerializer,
-                          SubscriptionSerializer, TagSerializer,
+                          RecipeWriteSerializer, SubscriptionSerializer, TagSerializer,
                           UserSerializer)
 
 User = get_user_model()
@@ -150,7 +149,6 @@ class UserViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
         url_path='set_password'
     )
-
     @action(
         detail=False, methods=['put', 'delete'],
         permission_classes=[IsAuthenticated],
