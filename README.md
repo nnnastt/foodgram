@@ -7,7 +7,7 @@
 
 - **Сайт:** https://foodgram-yp-2026.duckdns.org
 - **Админка:** https://foodgram-yp-2026.duckdns.org/admin/
-- **Документация:** http://localhost/api/docs/#tag/Spisok-pokupok
+- **Документация:** https://foodgram-yp-2026.duckdns.org/api/docs/
 ## Стек
 
 - **Backend:** Python 3.12, Django 5.1, DRF, Djoser, PostgreSQL, Gunicorn

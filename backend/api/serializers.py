@@ -35,16 +35,6 @@ class AvatarSerializer(serializers.ModelSerializer):
         fields = ('avatar',)
 
 
-class SetPasswordSerializer(serializers.Serializer):
-    new_password = serializers.CharField(required=True)
-    current_password = serializers.CharField(required=True)
-
-    def validate_current_password(self, value):
-        if not self.context['request'].user.check_password(value):
-            raise serializers.ValidationError('Неверный текущий пароль')
-        return value
-
-
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag

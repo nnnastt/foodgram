@@ -136,13 +136,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-    def get_serializer_class(self):
-        if self.action == 'subscriptions':
-            return SubscriptionSerializer
-        if self.action == 'set_password':
-            return SetPasswordSerializer
-        return UserSerializer
-
     @action(
         detail=False, methods=['get'],
         permission_classes=[IsAuthenticated],
@@ -157,14 +150,6 @@ class UserViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAuthenticated],
         url_path='set_password'
     )
-    def set_password(self, request):
-        serializer = self.get_serializer(
-            data=request.data, context={'request': request}
-        )
-        serializer.is_valid(raise_exception=True)
-        request.user.set_password(serializer.validated_data['new_password'])
-        request.user.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         detail=False, methods=['put', 'delete'],

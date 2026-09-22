@@ -1,3 +1,7 @@
 login: admin@ad.ru
 password: Qwerty123!!
 vm_name:  r-backend-vm-688624887
+
+login2: review
+password2: review1admin
+email: review@admin.ru
