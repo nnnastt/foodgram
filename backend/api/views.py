@@ -63,10 +63,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def get_link(self, request, pk=None):
         recipe = get_object_or_404(Recipe, pk=pk)
-        short_code = hashlib.md5(
-            f'recipe-{recipe.id}'.encode()
-        ).hexdigest()[:6]
-        short_link = f'https://foodgram-yp-2026.duckdns.org/s/{short_code}'
+        short_code = self._get_short_code(recipe.id)
+        short_link = f'{SHORT_LINK_DOMAIN}/s/{short_code}'
         return Response(
             {'short-link': short_link},
             status=status.HTTP_200_OK
