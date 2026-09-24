@@ -70,6 +70,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             {'short-link': short_link},
             status=status.HTTP_200_OK
         )
+
     def _add_to_list(self, model, user, recipe):
         _, created = model.objects.get_or_create(
             user=user, recipe=recipe
