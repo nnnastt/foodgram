@@ -21,6 +21,7 @@ from .serializers import (AvatarSerializer, IngredientSerializer,
                           RecipeWriteSerializer,
                           SubscriptionSerializer, TagSerializer,
                           UserSerializer)
+from .constants import SHORT_LINK_DOMAIN
 
 User = get_user_model()
 
@@ -70,6 +71,26 @@ class RecipeViewSet(viewsets.ModelViewSet):
             {'short-link': short_link},
             status=status.HTTP_200_OK
         )
+
+    @action(
+        detail=False, methods=['get'],
+        permission_classes=[AllowAny],
+        url_path=r's/(?P<short_code>[a-f0-9]+)'
+    )
+    def short_link(self, request, short_code=None):
+        for recipe in Recipe.objects.all():
+            if self._get_short_code(recipe.id) == short_code:
+                return HttpResponseRedirect(f'/recipes/{recipe.id}')
+        return Response(
+            {'detail': 'Рецепт не найден'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+    @staticmethod
+    def _get_short_code(recipe_id):
+        return hashlib.md5(
+            f'recipe-{recipe_id}'.encode()
+        ).hexdigest()[:6]
 
     def _add_to_list(self, model, user, recipe):
         _, created = model.objects.get_or_create(
