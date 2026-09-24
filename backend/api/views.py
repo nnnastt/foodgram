@@ -1,3 +1,5 @@
+import hashlib
+
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.http import HttpResponse
@@ -53,6 +55,21 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+    @action(
+        detail=True, methods=['get'],
+        permission_classes=[AllowAny],
+        url_path='get-link'
+    )
+    def get_link(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, pk=pk)
+        short_code = hashlib.md5(
+            f'recipe-{recipe.id}'.encode()
+        ).hexdigest()[:6]
+        short_link = f'https://foodgram-yp-2026.duckdns.org/s/{short_code}'
+        return Response(
+            {'short-link': short_link},
+            status=status.HTTP_200_OK
+        )
     def _add_to_list(self, model, user, recipe):
         _, created = model.objects.get_or_create(
             user=user, recipe=recipe

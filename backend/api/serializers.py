@@ -190,7 +190,7 @@ class SubscriptionSerializer(UserSerializer):
         request = self.context.get('request')
         limit = request.query_params.get('recipes_limit')
         recipes = obj.recipes.all()
-        if limit and limit.isdigit():
+        if limit and limit.isdigit() and int(limit) > 0:
             recipes = recipes[:int(limit)]
         return RecipeShortSerializer(recipes, many=True).data
 
